@@ -4,7 +4,6 @@ import { Provider } from "react-redux";
 
 import AppRouter from "./routers/AppRouter.js";
 import configureStore from "./store/configureStore.js";
-import { addExpense } from "./actions/expenses.js";
 
 import 'normalize.css/normalize.css';
 import './styles/styles.scss';
