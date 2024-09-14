@@ -17,7 +17,7 @@ export default (env, argv) => {
   return {
     entry: './src/app.js',
     output : {
-      path: path.resolve(__dirname, 'public'),
+      path: path.resolve(__dirname, 'public', 'dist'),
       filename: 'bundle.js'
     },
     mode: isProduction ? 'production': 'development',
@@ -60,6 +60,9 @@ export default (env, argv) => {
     devServer: {
       static: {
         directory: path.join(__dirname, 'public')
+      },
+      devMiddleware: {
+        publicPath: '/dist/',
       },
       historyApiFallback: true
     }
