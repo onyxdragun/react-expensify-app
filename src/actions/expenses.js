@@ -1,4 +1,4 @@
-import { get, push, remove, ref } from "firebase/database";
+import { get, push, remove, ref, update } from "firebase/database";
 import database, { dbRefExpenses } from '../firebase/firebase.js';
 
 // ADD_EXPENSE
@@ -40,7 +40,7 @@ export const startRemoveExpense = ({ id } = {}) => {
       const dbRefExpensesItem = ref(database, `expenses/${id}`);
       const snapshot = await remove(dbRefExpensesItem);
       // Remove from redux store
-      dispatch(removeExpense({id}));
+      dispatch(removeExpense({ id }));
     } catch (error) {
       console.log("Error removing expenses: ", error);
     }
@@ -53,6 +53,20 @@ export const editExpense = (id, updates) => ({
   id,
   updates
 });
+
+export const startEditExpense = (id, updates) => {
+  return async (dispatch) => {
+    try {
+      const dbRefExpensesItem = ref(database, `expenses/${id}`);
+      const snapshot = await update(dbRefExpensesItem, {
+        ...updates
+      });
+      dispatch(editExpense(id, updates));
+    } catch (error) {
+      console.log("Error updating expense:", error);
+    }
+  };
+};
 
 // SET_EXPENSES
 export const setExpenses = (expenses) => ({
