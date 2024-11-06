@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 
 import AppRouter from "./routers/AppRouter.js";
 import configureStore from "./store/configureStore.js";
+import { startSetExpenses } from "./actions/expenses.js";
 
 import './firebase/firebase.js';
 import 'normalize.css/normalize.css';
@@ -13,10 +14,13 @@ const store = configureStore();
 
 const root = ReactDOM.createRoot(document.querySelector('#app'));
 
-root.render(
-  <StrictMode>
-    <Provider store={store}>
-      <AppRouter />
-    </Provider>
-  </StrictMode>
-);
+// Fetch what is in the DB prior to render
+store.dispatch(startSetExpenses()).then(() => {
+  root.render(
+    <StrictMode>
+      <Provider store={store}>
+        <AppRouter />
+      </Provider>
+    </StrictMode>
+  );
+});

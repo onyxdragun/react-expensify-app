@@ -1,5 +1,16 @@
-import { addExpense, editExpense, removeExpense, startAddExpense } from "../../src/actions/expenses";
+import { set } from "firebase/database";
+import { addExpense, editExpense, removeExpense, startAddExpense, setExpenses } from "../../src/actions/expenses";
+import { dbRefExpenses } from "../../src/firebase/firebase";
 import expenses from '../fixtures/expenses.js';
+
+beforeEach((done) => {
+  const expensesData = {};
+  expenses.forEach(({id, description, note, amount, createdAt}) => {
+    expensesData[id] = {description, note, amount, createdAt};
+  });
+  set(dbRefExpenses, expensesData)
+    .then(() => done());
+});
 
 
 test('Should setup remove expense action object', () => {
@@ -63,3 +74,11 @@ test('Should setup add expense action object with provided values', () => {
 //     }
 //   });
 // });
+
+test('Should setup set expense action object with data', () => {
+  const action = setExpenses(expenses);
+  expect(action).toEqual({
+    type: 'SET_EXPENSES',
+    expenses
+  });
+});
