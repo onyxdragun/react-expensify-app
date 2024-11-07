@@ -3,6 +3,8 @@ import { addExpense, editExpense, removeExpense, startAddExpense, setExpenses } 
 import { dbRefExpenses } from "../../src/firebase/firebase";
 import expenses from '../fixtures/expenses.js';
 
+const uid = 'thismytestuid';
+
 beforeEach((done) => {
   const expensesData = {};
   expenses.forEach(({id, description, note, amount, createdAt}) => {

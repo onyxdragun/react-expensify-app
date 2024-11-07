@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, push } from 'firebase/database';
+import { getDatabase, ref } from 'firebase/database';
+import { GoogleAuthProvider } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -11,12 +12,14 @@ const firebaseConfig = {
   appId: "1:93177519571:web:dcd396e8fc4245805f2326"
 };
 
-const app = initializeApp(firebaseConfig);
+const googleAuthProvider = new GoogleAuthProvider();
 
-const database = getDatabase(app);
+const firebase = initializeApp(firebaseConfig);
+
+const database = getDatabase(firebase);
 const dbRefExpenses = ref(database, 'expenses');
 
-export {firebaseConfig, dbRefExpenses, database as default}
+export { firebase, googleAuthProvider, dbRefExpenses, database as default }
 
 //
 //  Code below is from learning Firebase

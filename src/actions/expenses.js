@@ -1,5 +1,5 @@
 import { get, push, remove, ref, update } from "firebase/database";
-import database, { dbRefExpenses } from '../firebase/firebase.js';
+import database from '../firebase/firebase.js';
 
 // ADD_EXPENSE
 export const addExpense = (expense) => ({
@@ -8,7 +8,9 @@ export const addExpense = (expense) => ({
 });
 
 export const startAddExpense = (expenseData = {}) => {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const uid = getState().auth.uid;
+    const dbRefUserExpenses = ref(database, `users/${uid}/expenses`);
     const {
       description = '',
       note = '',
@@ -17,7 +19,7 @@ export const startAddExpense = (expenseData = {}) => {
     } = expenseData;
     const expense = { description, note, amount, createdAt };
 
-    return push(dbRefExpenses, expense)
+    return push(dbRefUserExpenses, expense)
       .then((ref) => {
         dispatch(addExpense({
           id: ref.key,
@@ -34,11 +36,12 @@ export const removeExpense = ({ id } = {}) => ({
 });
 
 export const startRemoveExpense = ({ id } = {}) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     try {
-      // Taret specific item
-      const dbRefExpensesItem = ref(database, `expenses/${id}`);
-      const snapshot = await remove(dbRefExpensesItem);
+      // Target specific item
+      const uid = getState().auth.uid;
+      const dbRefUserExpensesItem = ref(database, `users/${uid}/expenses/${id}`);
+      const snapshot = await remove(dbRefUserExpensesItem);
       // Remove from redux store
       dispatch(removeExpense({ id }));
     } catch (error) {
@@ -55,10 +58,11 @@ export const editExpense = (id, updates) => ({
 });
 
 export const startEditExpense = (id, updates) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     try {
-      const dbRefExpensesItem = ref(database, `expenses/${id}`);
-      const snapshot = await update(dbRefExpensesItem, {
+      const uid = getState().auth.uid;
+      const dbRefUserExpensesItem = ref(database, `users/${uid}/expenses/${id}`);
+      const snapshot = await update(dbRefUserExpensesItem, {
         ...updates
       });
       dispatch(editExpense(id, updates));
@@ -76,9 +80,11 @@ export const setExpenses = (expenses) => ({
 
 // Fetches data stored in Firebase and feeds it the store
 export const startSetExpenses = () => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     try {
-      const snapshot = await get(dbRefExpenses);
+      const uid = getState().auth.uid;
+      const dbRefUserExpenses = ref(database, `users/${uid}/expenses`);
+      const snapshot = await get(dbRefUserExpenses);
       const expenses = [];
 
       snapshot.forEach((childSnapshot) => {
